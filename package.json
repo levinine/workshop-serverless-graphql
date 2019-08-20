@@ -1,0 +1,37 @@
+{
+  "name": "workshop-serverless-graphql",
+  "version": "1.0.0",
+  "description": "Serverless GraphQL Workshop by Levi9",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/levinine/workshop-serverless-graphql.git"
+  },
+  "keywords": [
+    "serverless",
+    "aws",
+    "graphql"
+  ],
+  "author": "Vuk Stankovic <v.stankovic@levi9.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/levinine/workshop-serverless-graphql/issues"
+  },
+  "homepage": "https://github.com/levinine/workshop-serverless-graphql#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.31",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.2",
+    "aws-lambda": "^0.1.2",
+    "aws-sdk": "^2.513.0",
+    "jest": "^24.9.0",
+    "serverless-offline": "^5.10.1",
+    "serverless-webpack": "^5.3.1",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.2"
+  }
+}

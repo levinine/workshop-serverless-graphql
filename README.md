@@ -1,1 +1,2 @@
-# workshop-serverless-graphql
+# Serverless GraphQL Workshop by Levi9
+
