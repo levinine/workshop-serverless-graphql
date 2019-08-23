@@ -4,6 +4,7 @@ app: workshop-serverless-graphql
 plugins: 
   - serverless-offline
   - serverless-webpack
+  - serverless-offline-kinesis
 
 provider:
   name: aws
@@ -13,15 +14,44 @@ provider:
   region: ${opt:region, 'eu-west-1'}
   stage: ${opt:stage, 'dev'}
 
+custom: 
+  ingestStream: ingest-${self:provider.stage}
+  serverless-offline-kinesis:
+    apiVersion: '2013-12-02'
+    endpoint: http://0.0.0.0:4567
+    region: eu-west-1
+    accessKeyId: root
+    secretAccessKey: root
+    skipCacheInvalidation: false
+    readInterval: 500
+
 functions:
   ingest:
     handler: src/functions/ingest.handler
+    events:
+    - http:
+        path: ingest
+        method: post
+        cors: true
   process:
     handler: src/functions/process.handler
+    events:
+      - stream:
+          type: kinesis
+          arn: 
+            Fn::GetAtt: [ IngestStream, Arn ]
+          batchSize: 1
+          startingPosition: LATEST
+          enabled: true
   expose:
     handler: src/functions/expose.handler
   graphql:
     handler: src/functions/graphql.handler
+    events:
+    - http:
+        path: graphql
+        method: post
+        cors: true
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -73,3 +103,10 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+resources: 
+  Resources:
+    IngestStream:
+      Type: AWS::Kinesis::Stream
+      Properties:
+        Name: ${self:custom.ingestStream}
+        ShardCount: 1
