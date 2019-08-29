@@ -5,6 +5,8 @@ plugins:
   - serverless-offline
   - serverless-webpack
   - serverless-offline-kinesis
+  - serverless-scriptable-plugin
+  - serverless-dotenv-plugin
 
 provider:
   name: aws
@@ -24,6 +26,8 @@ custom:
     secretAccessKey: root
     skipCacheInvalidation: false
     readInterval: 500
+    scriptHooks:
+      after:package:createDeploymentArtifacts: npm run create-stream
 
 functions:
   pull-data:

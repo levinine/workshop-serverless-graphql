@@ -4,7 +4,8 @@
   "description": "Serverless GraphQL Workshop by Levi9",
   "main": "handler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "create-stream": "node ./hooks/create-stream.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   "homepage": "https://github.com/levinine/workshop-serverless-graphql#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.31",
+    "@types/axios": "^0.14.0",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "aws-lambda": "^0.1.2",
@@ -30,11 +32,16 @@
     "jest": "^24.9.0",
     "kinesalite": "^2.0.3",
     "serverless": "^1.51.0",
+    "serverless-dotenv-plugin": "^2.1.1",
     "serverless-offline": "^5.10.1",
     "serverless-offline-kinesis": "^2.0.0",
+    "serverless-scriptable-plugin": "^1.0.3",
     "serverless-webpack": "^5.3.1",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
     "webpack": "^4.39.2"
+  },
+  "dependencies": {
+    "axios": "^0.19.0"
   }
 }

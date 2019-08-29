@@ -5,5 +5,5 @@ export const handler: Handler = (
     context: Context,
     callback: Callback
 ): void => {
-    console.log('Hello');
+    console.log('[INGEST]: ', event);
 };
