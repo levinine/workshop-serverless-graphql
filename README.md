@@ -26,3 +26,7 @@ Most of these will be managed through Serverless framework.
 
 ## API used 
 [CryptoCompare API](https://min-api.cryptocompare.com/)
+
+## What are we building
+
+![system diagram](assets/system-diagram.png "System diagram")
