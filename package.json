@@ -4,6 +4,8 @@
   "description": "Serverless GraphQL Workshop by Levi9",
   "main": "handler.js",
   "scripts": {
+    "start-sqs": "java -jar ./assets/elasticmq-server-0.14.14.jar",
+    "start": "sls offline",
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-stream": "node ./hooks/create-stream.js"
   },
@@ -35,7 +37,7 @@
     "serverless-dotenv-plugin": "^2.1.1",
     "serverless-offline": "^5.10.1",
     "serverless-offline-kinesis": "^2.0.0",
-    "serverless-scriptable-plugin": "^1.0.3",
+    "serverless-offline-sqs": "^2.0.3",
     "serverless-webpack": "^5.3.1",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",

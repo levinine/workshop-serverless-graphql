@@ -1,12 +1,11 @@
 service: workshop-serverless-graphql
 app: workshop-serverless-graphql
 
-plugins: 
-  - serverless-offline
-  - serverless-webpack
-  - serverless-offline-kinesis
-  - serverless-scriptable-plugin
+plugins:
   - serverless-dotenv-plugin
+  - serverless-webpack
+  - serverless-offline-sqs
+  - serverless-offline
 
 provider:
   name: aws
@@ -18,16 +17,14 @@ provider:
 
 custom: 
   ingestStream: ingest-${self:provider.stage}
-  serverless-offline-kinesis:
-    apiVersion: '2013-12-02'
-    endpoint: http://0.0.0.0:4567
+  serverless-offline-sqs:
+    autoCreate: true
+    apiVersion: '2012-11-05'
+    endpoint: http://0.0.0.0:9324
     region: eu-west-1
     accessKeyId: root
     secretAccessKey: root
     skipCacheInvalidation: false
-    readInterval: 500
-    scriptHooks:
-      after:package:createDeploymentArtifacts: npm run create-stream
 
 functions:
   pull-data:
@@ -48,13 +45,12 @@ functions:
   process:
     handler: src/functions/process.handler
     events:
-      - stream:
-          type: kinesis
-          arn: 
-            Fn::GetAtt: [ IngestStream, Arn ]
-          batchSize: 1
-          startingPosition: LATEST
-          enabled: true
+      - sqs:
+          queueName: IngestQueue
+          arn:
+            Fn::GetAtt:
+              - IngestQueue
+              - Arn
   expose:
     handler: src/functions/expose.handler
   graphql:
@@ -65,10 +61,9 @@ functions:
         method: post
         cors: true
 
-resources: 
+resources:
   Resources:
-    IngestStream:
-      Type: AWS::Kinesis::Stream
+    MyFourthQueue:
+      Type: AWS::SQS::Queue
       Properties:
-        Name: ${self:custom.ingestStream}
-        ShardCount: 1
+        QueueName: IngestQueue
