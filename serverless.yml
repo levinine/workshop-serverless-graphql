@@ -6,6 +6,7 @@ plugins:
   - serverless-webpack
   - serverless-offline-sqs
   - serverless-offline
+  - serverless-dynamodb-local
 
 provider:
   name: aws
@@ -25,6 +26,17 @@ custom:
     accessKeyId: root
     secretAccessKey: root
     skipCacheInvalidation: false
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
 
 functions:
   pull-data:
@@ -63,7 +75,20 @@ functions:
 
 resources:
   Resources:
-    MyFourthQueue:
+    IngestQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: IngestQueue
+    DataTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: DataTable
+        AttributeDefinitions:
+          - AttributeName: type
+            AttributeType: S
+        KeySchema:
+          - AttributeName: type
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
