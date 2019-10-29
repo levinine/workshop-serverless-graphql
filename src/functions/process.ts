@@ -5,5 +5,6 @@ export const handler: Handler = (
     context: Context,
     callback: Callback
 ): void => {
-    console.log('Hello');
+    console.log('Hello from process. Event from SQS below');
+    console.log(event);
 };

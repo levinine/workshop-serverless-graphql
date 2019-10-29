@@ -6,13 +6,15 @@ export const handler: Handler = async (event: any, context: Context, callback: C
     const url = process.env.API_URL + 'data/top/totalvolfull?limit=10&tsym=USD&api_key=' + process.env.API_KEY;
     const apiData = await axios.get(url);
     try {
-        await axios.post(  apiUrl + '/ingest', {
+        const ingestResult = await axios.post(   apiUrl + 'ingest', {
             data: apiData.data
         }, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
+
+        console.log(ingestResult);
     } catch (e) {
         return {
             statusCode: 500,
