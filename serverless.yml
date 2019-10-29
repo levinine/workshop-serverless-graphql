@@ -12,12 +12,33 @@ provider:
   name: aws
   runtime: nodejs10.x
 
-# you can overwrite defaults here
   region: ${opt:region, 'eu-west-1'}
   stage: ${opt:stage, 'dev'}
+  environment:
+    REGION: ${self:provider.region}
+    QUEUE_NAME: ${self:custom.ingestQueue}
+    ENDPOINT: ${self:custom.serverless-offline-sqs.endpoint}
+    QUEUE: !Ref IngestQueue
+    REMOTE_UID: !Ref "ApiGatewayRestApi"
+    REMOTE_URL: {
+      "Fn::Join" :
+        [
+          "",
+          [" https://",
+           { "Ref" : "ApiGatewayRestApi" },
+           ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/"
+          ]
+        ]
+    }
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource:
+        Fn::GetAtt: [ IngestQueue, Arn ]
 
-custom: 
-  ingestStream: ingest-${self:provider.stage}
+custom:
+  ingestQueue: ${self:service}-ingest-${self:provider.stage}
   serverless-offline-sqs:
     autoCreate: true
     apiVersion: '2012-11-05'
@@ -68,17 +89,21 @@ functions:
   graphql:
     handler: src/functions/graphql.handler
     events:
-    - http:
-        path: graphql
-        method: post
-        cors: true
+      - http:
+          path: graphql
+          method: post
+          cors: true
+      - http:
+          path: graphql
+          method: get
+          cors: true
 
 resources:
   Resources:
     IngestQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: IngestQueue
+        QueueName: ${self:custom.ingestQueue}
     DataTable:
       Type: AWS::DynamoDB::Table
       Properties:
