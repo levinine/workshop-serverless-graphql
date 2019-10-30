@@ -20,6 +20,7 @@ provider:
     QUEUE_NAME: ${self:custom.ingestQueue}
     ENDPOINT: ${self:custom.serverless-offline-sqs.endpoint}
     QUEUE: !Ref IngestQueue
+    DATA_TABLE: ${self:custom.dataTableName}
     REMOTE_UID: !Ref "ApiGatewayRestApi"
     REMOTE_URL: {
       "Fn::Join" :
@@ -37,8 +38,18 @@ provider:
         - sqs:*
       Resource:
         Fn::GetAtt: [ IngestQueue, Arn ]
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - Fn::GetAtt: [ DataTable, Arn ]
+        - Fn::Join:
+            - "/"
+            - - { "Fn::GetAtt": [ DataTable, Arn ] }
+              - "index/*"
 
 custom:
+  dataTableName: data-${self:provider.stage}
   ingestQueue: ${self:service}-ingest-${self:provider.stage}
   serverless-offline-sqs:
     autoCreate: true
@@ -87,6 +98,11 @@ functions:
               - Arn
   expose:
     handler: src/functions/expose.handler
+    events:
+      - http:
+          path: expose
+          method: get
+          cors: true
   graphql:
     handler: src/functions/graphql.handler
     events:
@@ -108,13 +124,29 @@ resources:
     DataTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: DataTable
+        TableName: ${self:custom.dataTableName}
         AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: N
           - AttributeName: type
             AttributeType: S
         KeySchema:
-          - AttributeName: type
+          - AttributeName: id
             KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: typeGSI
+            KeySchema:
+              - AttributeName: type
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1

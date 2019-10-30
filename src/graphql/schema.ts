@@ -2,13 +2,29 @@ import { gql } from 'apollo-server-lambda';
 import {DataService} from "../services/data.service";
 
 export const typeDefs = gql`
-  extend type Query {
-    data: String
-  }
+    type Item {
+        id: ID!
+        createdAt: Int!
+        currencies: [Currency]!
+    }
+    
+    type Currency {
+        imageUrl: String!
+        algorithm: String!
+        url: String!
+        name: String!
+        fullName: String!
+        price: Float!
+        change: Float!
+    }
+    
+    extend type Query {
+        currencies: [Item!]!
+    }
 `;
 
 export const resolvers = {
     Query: {
-        data: new DataService().getHello,
+        currencies: DataService.getCurrencies,
     },
 };

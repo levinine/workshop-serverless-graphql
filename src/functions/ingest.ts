@@ -5,10 +5,6 @@ export const handler: Handler = async (
     event: any
 ): Promise<any> => {
     let sqs = new SQS();
-    const response = {
-        statusCode: 200,
-        Body: JSON.stringify({ hello: 'world' })
-    };
     let streamUrl;
     if (process.env.IS_OFFLINE) {
         streamUrl = process.env.ENDPOINT + '/' + process.env.QUEUE_NAME;
@@ -21,13 +17,17 @@ export const handler: Handler = async (
             QueueUrl: streamUrl,
             DelaySeconds: 0
         }).promise();
-        console.log(response);
-        return response;
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: 'message sent to queue'
+            })
+        };
     } catch (e) {
-        console.log(e);
         return {
             statusCode: 500,
-            Body: JSON.stringify({ error: e.message })
+            body: JSON.stringify({ error: e.message })
         }
     }
 };

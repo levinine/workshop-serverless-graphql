@@ -1,16 +1,10 @@
 import {ApolloServer} from "apollo-server-lambda";
-import {DataService} from "../services/data.service";
 import * as schema from '../graphql/schema';
 
 const instantiateApollo = (): ApolloServer => {
     console.log(process.env);
     return new ApolloServer({
         modules: [schema],
-        dataSources: () => {
-            return {
-                contentServiceProvider: new DataService(),
-            };
-        },
         playground: process.env.NODE_ENV === 'production' ? false : {
             endpoint: process.env.IS_OFFLINE
                 ? '/graphql'

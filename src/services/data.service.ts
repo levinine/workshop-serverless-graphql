@@ -1,19 +1,11 @@
-import { RESTDataSource } from 'apollo-datasource-rest';
+import axios from 'axios';
 
-export class DataService extends RESTDataSource {
+export class DataService {
+    public static async getCurrencies(): Promise<any[]> {
+        const baseURL = process.env.IS_OFFLINE ? process.env.LOCAL_URL : process.env.REMOTE_URL;
 
-    constructor() {
-        super();
-        this.baseURL = process.env.IS_OFFLINE ? process.env.LOCAL_URL : process.env.REMOTE_URL;
-    }
-
-    public async getData(): Promise<any[]> {
-        // TODO Implement actual logic for fetching expose lambda results
-        // TODO Implement expose lambda
-        return await this.get(`${this.baseURL}/expose`);
-    }
-
-    public async getHello(): Promise<string> {
-        return 'hello world';
+        const currencies = await axios.get(`${baseURL}/expose`);
+        console.log('currencies', currencies.data);
+        return currencies.data;
     }
 }
