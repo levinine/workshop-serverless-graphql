@@ -4,6 +4,7 @@ const slsw = require('serverless-webpack');
 
 module.exports = {
     entry: slsw.lib.entries,
+    mode: 'development',
     watch: false,
     target: 'node',
     module: {
@@ -16,7 +17,7 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.tsx', '.ts', '.mjs', '.js'],
     },
     output: {
         libraryTarget: 'commonjs',

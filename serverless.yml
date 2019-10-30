@@ -15,6 +15,7 @@ provider:
   region: ${opt:region, 'eu-west-1'}
   stage: ${opt:stage, 'dev'}
   environment:
+    STAGE: ${self:provider.stage}
     REGION: ${self:provider.region}
     QUEUE_NAME: ${self:custom.ingestQueue}
     ENDPOINT: ${self:custom.serverless-offline-sqs.endpoint}

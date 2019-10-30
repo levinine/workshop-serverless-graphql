@@ -6,6 +6,7 @@ export const handler: Handler = async (event: any, context: Context, callback: C
     const url = process.env.API_URL + 'data/top/totalvolfull?limit=10&tsym=USD&api_key=' + process.env.API_KEY;
     const apiData = await axios.get(url);
     try {
+        console.log('sending data to ingest lambda', apiData.data);
         const ingestResult = await axios.post(   apiUrl + 'ingest', {
             data: apiData.data
         }, {
@@ -16,6 +17,7 @@ export const handler: Handler = async (event: any, context: Context, callback: C
 
         console.log(ingestResult);
     } catch (e) {
+        console.log(e);
         return {
             statusCode: 500,
             body: JSON.stringify({

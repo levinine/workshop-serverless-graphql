@@ -6,7 +6,7 @@ export const handler: Handler = async (
 ): Promise<any> => {
     let sqs = new SQS();
     const response = {
-        StatusCode: 200,
+        statusCode: 200,
         Body: JSON.stringify({ hello: 'world' })
     };
     let streamUrl;
@@ -15,8 +15,6 @@ export const handler: Handler = async (
     } else {
         streamUrl = process.env.QUEUE;
     }
-    console.log(process.env.QUEUE);
-    console.log(streamUrl);
     try {
         await sqs.sendMessage({
             MessageBody: event.body,
@@ -28,7 +26,7 @@ export const handler: Handler = async (
     } catch (e) {
         console.log(e);
         return {
-            StatusCode: 500,
+            statusCode: 500,
             Body: JSON.stringify({ error: e.message })
         }
     }
