@@ -16,7 +16,12 @@ const instantiateApollo = (): ApolloServer => {
 
 export const handler = (event: any, context: any, callback: any): void => {
     const server = instantiateApollo();
-    const graphqlHandler = server.createHandler();
+    const graphqlHandler = server.createHandler({
+        cors: {
+            origin: '*',
+            credentials: true,
+        },
+    });
 
     // tell AWS lambda we do not want to wait for NodeJS event loop
     // to be empty in order to send the response
