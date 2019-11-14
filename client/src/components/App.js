@@ -3,7 +3,7 @@ import style from './App.module.css'
 import { Query } from 'react-apollo'
 import { GET_CURRENCIES } from "../queries"
 import Table from './Table/Table';
-
+import loader from '../assets/loader.gif'
 
 
 class App extends Component {
@@ -24,7 +24,7 @@ class App extends Component {
     return (
       <Query query={GET_CURRENCIES}>
         {({ data, loading, error }) => {
-          if (loading) return <div>loading</div>
+          if (loading) return <div><img src={loader} alt="loader" className={style.loader} /></div>
           if (error) {
             return <div>Error</div>
           }
@@ -41,10 +41,7 @@ class App extends Component {
                   return <Table key={currencies.id} currencies={currencies} />
                 })}
               </tbody>
-
-
             </table>
-
           </div>
         }}
       </Query>
