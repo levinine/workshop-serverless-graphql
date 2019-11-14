@@ -4,7 +4,7 @@ import {DataService} from "../services/data.service";
 export const typeDefs = gql`
     type Item {
         id: ID!
-        createdAt: Int!
+        createdAt: String!
         currencies: [Currency]!
     }
     
