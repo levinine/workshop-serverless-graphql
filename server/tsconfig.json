@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "baseUrl": "server/src",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": false,
+    "noImplicitAny": true,
+    "noUnusedLocals": false,
+    "removeComments": false,
+    "noLib": false,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "sourceMap": true,
+    "allowJs": true,
+    "lib": [
+      "es6"
+    ],
+    "outDir": "./dist"
+  },
+  "include": [
+    "server/src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ],
+  "types": [
+    "typePatches"
+  ]
+}
