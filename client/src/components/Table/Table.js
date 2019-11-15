@@ -10,7 +10,7 @@ class Table extends Component {
                 <td ><Moment format="DD.MM.YYYY HH:mm">{this.props.currencies.createdAt}</Moment></td>
                 {this.props.currencies.currencies.map(currencie => {
                     return <td key={currencie.name} className={style.price}>&#36;{currencie.price}
-                        <span className={style.change}><b>Change</b>:{currencie.change}</span></td>
+                        <span className={currencie.change > 0 ? style.changeGreen : style.changeRed}><b>Change</b>:{currencie.change}</span></td>
                 })}
             </tr>
         )

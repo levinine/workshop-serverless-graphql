@@ -7,19 +7,7 @@ import loader from '../assets/loader.gif'
 
 
 class App extends Component {
-  state = {
-    columnDefs: [
-      { headerName: "Name", field: "name" },
-      { headerName: "Price", field: "price" },
-      { headerName: "Change", field: "change" }],
-    autoGroupColumnDef: {
-      headerName: "Group",
-      field: "id"
-    },
 
-
-
-  }
   render() {
     return (
       <Query query={GET_CURRENCIES}>
@@ -28,7 +16,6 @@ class App extends Component {
           if (error) {
             return <div>Error</div>
           }
-          console.log(data.currencies);
           return <div >
             <table className={style.table}>
               <tbody><tr>
@@ -37,7 +24,9 @@ class App extends Component {
                   return <th key={currencie.name}>{currencie.name}</th>
                 })}
               </tr>
-                {data.currencies.map(currencies => {
+                {data.currencies.sort((a, b) => {
+                  return -(Number(new Date(a.createdAt)) - Number(new Date(b.createdAt)))
+                }).map(currencies => {
                   return <Table key={currencies.id} currencies={currencies} />
                 })}
               </tbody>
