@@ -1,0 +1,19 @@
+.price .change {
+    display: none;
+}
+.change {
+    height: 30px;
+    color: white;
+    
+}
+.price:hover {
+    cursor: pointer;
+} 
+
+.price:hover .change {
+  display: inline;
+  position: absolute; /* relative to .tooltipTrigger */
+  z-index: 100;
+  background-color: #4CAF50;
+  border: 1px solid #ccc;
+}
