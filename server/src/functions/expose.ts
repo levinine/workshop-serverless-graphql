@@ -28,7 +28,7 @@ function mapOutput(items: any[]): any[] {
     return items.map(item => {
         return {
             id: item.id,
-            createdAt: item.createdAt,
+            createdAt: new Date(item.createdAt).toISOString(),
             currencies: mapCurrencies(item.currencies)
         }
     });
