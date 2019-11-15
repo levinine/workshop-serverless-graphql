@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "server/src",
+    "baseUrl": "src",
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": false,
@@ -20,7 +20,7 @@
     "outDir": "./dist"
   },
   "include": [
-    "server/src/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
