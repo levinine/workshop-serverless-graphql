@@ -6,7 +6,7 @@ export const handler: Handler = async (event: any, context: Context, callback: C
     const url = process.env.API_URL + 'data/top/totalvolfull?limit=10&tsym=USD&api_key=' + process.env.API_KEY;
     try {
         const apiData = await axios.get(url);
-        console.log('sending data to ingest lambda', apiData.data);
+        console.log('sending data to ingest lambda at ', apiUrl + 'ingest');
         const ingestResult = await axios.post(   apiUrl + 'ingest', {
             data: apiData.data
         }, {

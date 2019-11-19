@@ -4,10 +4,10 @@ import {SQS} from "aws-sdk";
 export const handler: Handler = async (
     event: any
 ): Promise<any> => {
-    let sqs = new SQS();
+    let sqs = await initializeSQS();
     let streamUrl;
     if (process.env.IS_OFFLINE) {
-        streamUrl = process.env.ENDPOINT + '/' + process.env.QUEUE_NAME;
+        streamUrl = process.env.ENDPOINT + '/queue/' + process.env.QUEUE_NAME;
     } else {
         streamUrl = process.env.QUEUE;
     }
@@ -31,3 +31,18 @@ export const handler: Handler = async (
         }
     }
 };
+
+async function initializeSQS(): Promise<SQS> {
+    let sqs: SQS;
+    if (process.env.IS_OFFLINE) {
+        sqs = new SQS({
+            apiVersion: '2012-11-05',
+            accessKeyId: 'root',
+            secretAccessKey: 'root',
+            endpoint: 'http://localhost:9324'
+        });
+    } else {
+        sqs = new SQS();
+    }
+    return sqs;
+}
