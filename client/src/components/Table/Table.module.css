@@ -1,7 +1,8 @@
-.price .change {
+.price .changeRed, .changeGreen{
     display: none;
 }
-.change {
+.changeRed, .changeGreen {
+    padding-top: 6px;
     height: 30px;
     color: white;
     
@@ -10,10 +11,18 @@
     cursor: pointer;
 } 
 
-.price:hover .change {
+.price:hover .changeGreen {
   display: inline;
-  position: absolute; /* relative to .tooltipTrigger */
+  position: absolute; 
   z-index: 100;
   background-color: #4CAF50;
   border: 1px solid #ccc;
 }
+
+.price:hover .changeRed {
+    display: inline;
+    position: absolute; 
+    z-index: 100;
+    background-color: red;
+    border: 1px solid #ccc;
+  }
