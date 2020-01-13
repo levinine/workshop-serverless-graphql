@@ -8,7 +8,7 @@ import { ApolloProvider } from 'react-apollo'
 
 export const client = new ApolloClient(
     {
-        uri: 'https://ta9lgzvfgc.execute-api.eu-west-1.amazonaws.com/vuk/graphql',
+        uri: process.env.REACT_APP_API_URL,
         fetchOptions: {
             credentials: 'include'
         },
