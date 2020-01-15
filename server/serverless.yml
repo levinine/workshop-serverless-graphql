@@ -23,11 +23,11 @@ provider:
     DATA_TABLE: ${self:custom.dataTableName}
     REMOTE_UID: !Ref "ApiGatewayRestApi"
     REMOTE_URL: {
-      "Fn::Join" :
+      "Fn::Join":
         [
           "",
           [" https://",
-           { "Ref" : "ApiGatewayRestApi" },
+           { "Ref": "ApiGatewayRestApi" },
            ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/"
           ]
         ]
@@ -73,6 +73,7 @@ custom:
 
 functions:
   pull-data:
+    name: ${self:provider.stackName}-pull-data
     handler: src/functions/pull-data.handler
     events:
       - schedule: rate(1 hour)
@@ -81,6 +82,7 @@ functions:
           method: get
           cors: true
   ingest:
+    name: ${self:provider.stackName}-ingest
     handler: src/functions/ingest.handler
     events:
       - http:
@@ -88,6 +90,7 @@ functions:
           method: post
           cors: true
   process:
+    name: ${self:provider.stackName}-process
     handler: src/functions/process.handler
     events:
       - sqs:
@@ -97,6 +100,7 @@ functions:
               - IngestQueue
               - Arn
   expose:
+    name: ${self:provider.stackName}-expose
     handler: src/functions/expose.handler
     events:
       - http:
@@ -104,6 +108,7 @@ functions:
           method: get
           cors: true
   graphql:
+    name: ${self:provider.stackName}-graphql
     handler: src/functions/graphql.handler
     events:
       - http:
@@ -114,39 +119,22 @@ functions:
           path: graphql
           method: get
           cors: true
+  origin-response:
+    name: ${self:provider.stackName}-origin-response
+    handler: src/functions/origin-response.handler
+    events:
+      - cloudFront:
+          eventType: origin-response
+          origin: https://app.acme.com
+  viewer-request:
+    name: ${self:provider.stackName}-viewer-request
+    handler: src/functions/viewer-request.handler
+    events:
+      - cloudFront:
+          eventType: viewer-request
+          origin: https://app.acme.com
 
 resources:
-  Resources:
-    IngestQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: ${self:custom.ingestQueue}
-    DataTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.dataTableName}
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-          - AttributeName: createdAt
-            AttributeType: N
-          - AttributeName: type
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-          - AttributeName: createdAt
-            KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        GlobalSecondaryIndexes:
-          - IndexName: typeGSI
-            KeySchema:
-              - AttributeName: type
-                KeyType: HASH
-            Projection:
-              ProjectionType: ALL
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
+  - ${file(resources/origin-bucket.yml)}
+  - ${file(resources/cache-bucket.yml)}
+  - ${file(resources/resources.yml)}
