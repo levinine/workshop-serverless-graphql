@@ -11,6 +11,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs10.x
+  stackName: workshop-serverless-graphql-${self:provider.stage}
 
   region: ${opt:region, 'eu-west-1'}
   stage: ${opt:stage, 'dev'}
@@ -125,14 +126,22 @@ functions:
     events:
       - cloudFront:
           eventType: origin-response
-          origin: https://app.acme.com
+          origin: s3://${self:provider.resources.originBucketName}.s3.amazonaws.com/files
   viewer-request:
     name: ${self:provider.stackName}-viewer-request
     handler: src/functions/viewer-request.handler
     events:
       - cloudFront:
           eventType: viewer-request
-          origin: https://app.acme.com
+          origin: s3://${self:provider.resources.originBucketName}.s3.amazonaws.com/files
+  update:
+    name: ${self:provider.stackName}-update
+    handler: src/functions/update.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt: [DataTable, StreamArn]
 
 resources:
   - ${file(resources/origin-bucket.yml)}
