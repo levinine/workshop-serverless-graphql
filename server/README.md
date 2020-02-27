@@ -9,7 +9,7 @@
 3. AWS Account and how to use it
 4. Identity & Access Management
 5. Networking, VPC, Subnets
-6. Computing - AWS Lambda functions
+6. Computing - AWS Lambda functions and triggers
 7. Databases = AWS DynamoDB
 8. Storage - S3 Bucket
 9. Queueing services - SQS, Kinesis 
