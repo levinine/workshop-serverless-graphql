@@ -13,7 +13,7 @@ provider:
   runtime: nodejs10.x
   stackName: workshop-serverless-graphql-${self:provider.stage}
 
-  region: ${opt:region, 'eu-west-1'}
+  region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
   environment:
     ORIGIN_BUCKET_NAME: ${self:provider.stackName}-origin-bucket
