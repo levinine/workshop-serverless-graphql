@@ -1,40 +1,40 @@
 import {Handler, SQSEvent} from "aws-lambda";
 import {DynamoDB} from "aws-sdk";
 import * as uuid from 'uuid/v1';
+import {getResponse} from "../helpers/utils";
+import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
+import PutItemOutput = DocumentClient.PutItemOutput;
+
+const dynamoDb = new DynamoDB.DocumentClient();
 
 export const handler: Handler = async (
     event: SQSEvent
 ): Promise<any> => {
-    console.log('Hello from process. Event from SQS below');
-    console.log(event);
-    const dynamoDb = new DynamoDB.DocumentClient();
+    console.log('Process SQS event', event);
     try {
-        const record: string = event.Records[0].body;
-        const bodyParsed: any = JSON.parse(record);
-        const preparedMessage = {
-            id: uuid(),
-            type: 'RECORD',
-            currencies: prepareItem(bodyParsed.data.Data),
-            createdAt: new Date().getTime()
-        };
+        const bodyParsed: any = JSON.parse(event.Records[0].body);
+        const preparedMessage = prepareRecord(bodyParsed.data.Data);
         console.log('Storing item', JSON.stringify(preparedMessage));
 
-        await dynamoDb.put({
+        const putItemOutput: PutItemOutput = await dynamoDb.put({
             TableName: process.env.DATA_TABLE,
             Item: preparedMessage
         }).promise();
-        return {
-            statusCode: 200,
-            body: JSON.stringify('data stored to dynamodb')
-        }
+        return getResponse(200, { message: 'Data stored to dynamodb ' + putItemOutput.ConsumedCapacity.CapacityUnits });
     } catch (e) {
         console.log(e);
-        return {
-            statusCode: 200,
-            body: JSON.stringify(e.message)
-        }
+        return getResponse(500, e);
     }
 };
+
+function prepareRecord(data: any) {
+    return {
+        id: uuid(),
+        type: 'RECORD',
+        currencies: prepareItem(data),
+        createdAt: new Date().getTime()
+    }
+}
 
 function prepareItem(item: any): any {
     for (let prop in item) {

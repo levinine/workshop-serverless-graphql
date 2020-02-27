@@ -20,7 +20,7 @@ export const handler: Handler = async (
         }).promise();
 
         return getResponse(200, {
-            message: 'Message sent to queue' + sendMessageResult.MessageId
+            message: 'Message sent to queue ' + sendMessageResult.MessageId
         });
     } catch (e) {
         return getResponse(500, e);
