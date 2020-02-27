@@ -2,6 +2,26 @@
 
 ## Workshop outline
 
+### Topics covered
+
+1. Basic concepts of Cloud Computing
+2. Introduction to AWS concepts (Regions, Availability Zones)
+3. AWS Account and how to use it
+4. Identity & Access Management
+5. Networking, VPC, Subnets
+6. Computing - AWS Lambda functions
+7. Databases = AWS DynamoDB
+8. Storage - S3 Bucket
+9. Queueing services - SQS, Kinesis 
+10. Sample app architecture and deployment strategy
+11. Monitoring – Cloud watch
+12. Caching - Cloud Front
+13. Edge location computing - Lambda@Edge
+14. Serverless framework
+15. Microservices architecture
+
+### What are we going to build
+
 Using [CryptoCompare API](https://min-api.cryptocompare.com/) we are going to fetch Crypto currencies data, pass data into SQS and store processed data in DynamoDB.
 On the other side of system, this data will be exposed to client through GraphQL endpoint. 
 
@@ -9,9 +29,9 @@ API contains Crypto currency images that we are going to serve though CloudFront
 
 Client will be React application with Apollo client.
 
-## Services used
+### What are we going to use to do it
 
-* Lambda
+* AWS Lambda
 * SQS/Kinesis
 * DynamoDB
 * API Gateway
@@ -19,25 +39,31 @@ Client will be React application with Apollo client.
 * CloudFront
 * CloudWatch
 * CloudFormation
-* S3
+* S3 Bucket
 * Lambda@Edge
 
 Most of these will be managed through Serverless framework.
 
-## API used 
+#### API used 
 [CryptoCompare API](https://min-api.cryptocompare.com/)
 
-## What are we building
+### Systerm architecture
 
 ![system diagram](assets/system-diagram.png "System diagram")
 
 ## Run locally 
+
+To be able to run system locally without deploying to AWS, we need to mimic some services. 
+
+To simulate SQS we are using ElasticMQ 
 
 Run ElasticMQ server (Requires Java JDK)
 
 ```bash
 java -jar assets/elasticmq-server-0.14.14.jar
 ```
+
+To simulate DynamoDB locally we are going to use in memory DynamoDB. 
 
 Download local DynamoDB 
 
@@ -51,7 +77,7 @@ Run local DynamoDB
 sls dynamodb start --migrate
 ```
 
-Run serverless offline 
+Run serverless offline - this will start server with API Gateway  
 
 ```bash
 sls offline
