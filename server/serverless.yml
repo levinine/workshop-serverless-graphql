@@ -16,6 +16,7 @@ provider:
   region: ${opt:region, 'eu-west-1'}
   stage: ${opt:stage, 'dev'}
   environment:
+    ORIGIN_BUCKET_NAME: ${self:provider.stackName}-origin-bucket
     STAGE: ${self:provider.stage}
     REGION: ${self:provider.region}
     QUEUE_NAME: ${self:custom.ingestQueue}
@@ -126,14 +127,14 @@ functions:
     events:
       - cloudFront:
           eventType: origin-response
-          origin: s3://${self:provider.resources.originBucketName}.s3.amazonaws.com/files
+          origin: s3://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/files
   viewer-request:
     name: ${self:provider.stackName}-viewer-request
     handler: src/functions/viewer-request.handler
     events:
       - cloudFront:
           eventType: viewer-request
-          origin: s3://${self:provider.resources.originBucketName}.s3.amazonaws.com/files
+          origin: s3://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/files
   update:
     name: ${self:provider.stackName}-update
     handler: src/functions/update.handler
