@@ -49,7 +49,7 @@ Most of these will be managed through Serverless framework.
 
 ### Systerm architecture
 
-![system diagram](assets/system-diagram.png "System diagram")
+![system diagram](server/assets/system-diagram.png "System diagram")
 
 ## Run locally 
 
