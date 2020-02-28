@@ -25,6 +25,7 @@
 14. Serverless framework
 15. Running locally
 16. Microservices architecture
+17. Cost analysis
 
 ### What are we going to build
 
