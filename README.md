@@ -14,18 +14,20 @@
 3. AWS Account and how to use it
 4. Sample app architecture and deployment strategy
 5. Identity & Access Management 
-6. Computing - AWS Lambda functions and triggers
+6. Computing - AWS Lambda functions and triggers (SQS, DynamoDB Streams, API Gateway)
 7. Queueing services - SQS, Kinesis 
 8. Databases - AWS DynamoDB
-9. Storage - S3 Bucket
-10. Monitoring – Cloud watch
-11. Caching - Cloud Front
-12. Edge location computing - Lambda@Edge
-13. Networking, VPC, Subnets
-14. Serverless framework
-15. Running locally
-16. Microservices architecture
-17. Cost analysis
+9. Graphql introduction --> Intro to Graphql Workshop
+10. Storage - S3 Bucket
+11. Monitoring – Cloud watch
+12. Caching - Cloud Front
+13. Edge location computing - Lambda@Edge
+14. Networking, VPC, Subnets
+15. Serverless as a concept vs Serverless as a framework
+16. Serverless framework
+17. Running locally
+18. Microservices architecture
+19. Cost analysis
 
 ### What are we going to build
 
