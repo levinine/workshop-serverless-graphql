@@ -6,7 +6,8 @@
   "scripts": {
     "start-sqs": "java -jar ./assets/elasticmq-server-0.14.14.jar",
     "start": "sls offline",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run test:unit",
+    "test:unit": "jest --coverage --projects ./unit-test.config.js",
     "create-queue": "node ./create-queue.js"
   },
   "repository": {
@@ -33,7 +34,7 @@
     "@types/uuid": "^3.4.6",
     "aws-lambda": "^0.1.2",
     "aws-sdk": "^2.513.0",
-    "jest": "^24.9.0",
+    "jest": "^25.1.0",
     "kinesalite": "^2.0.3",
     "serverless": "^1.51.0",
     "serverless-dotenv-plugin": "^2.1.1",
@@ -42,6 +43,7 @@
     "serverless-offline-kinesis": "^2.0.0",
     "serverless-offline-sqs": "^3.0.1",
     "serverless-webpack": "^5.3.1",
+    "ts-jest": "^25.2.1",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
     "webpack": "^4.39.2"
