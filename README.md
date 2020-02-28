@@ -23,7 +23,8 @@
 12. Edge location computing - Lambda@Edge
 13. Networking, VPC, Subnets
 14. Serverless framework
-15. Microservices architecture
+15. Running locally
+16. Microservices architecture
 
 ### What are we going to build
 
