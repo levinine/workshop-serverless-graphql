@@ -1,5 +1,10 @@
 # Serverless GraphQL Workshop by Levi9
 
+## Prerequisite
+
+* Free tier AWS account
+* Laptop
+
 ## Workshop outline
 
 ### Topics covered
@@ -7,16 +12,16 @@
 1. Basic concepts of Cloud Computing
 2. Introduction to AWS concepts (Regions, Availability Zones)
 3. AWS Account and how to use it
-4. Identity & Access Management
-5. Networking, VPC, Subnets
+4. Sample app architecture and deployment strategy
+5. Identity & Access Management 
 6. Computing - AWS Lambda functions and triggers
-7. Databases = AWS DynamoDB
-8. Storage - S3 Bucket
-9. Queueing services - SQS, Kinesis 
-10. Sample app architecture and deployment strategy
-11. Monitoring – Cloud watch
-12. Caching - Cloud Front
-13. Edge location computing - Lambda@Edge
+7. Databases - AWS DynamoDB
+8. Queueing services - SQS, Kinesis 
+9. Storage - S3 Bucket
+10. Monitoring – Cloud watch
+11. Caching - Cloud Front
+12. Edge location computing - Lambda@Edge
+13. Networking, VPC, Subnets
 14. Serverless framework
 15. Microservices architecture
 
