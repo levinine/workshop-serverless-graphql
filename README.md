@@ -15,8 +15,8 @@
 4. Sample app architecture and deployment strategy
 5. Identity & Access Management 
 6. Computing - AWS Lambda functions and triggers
-7. Databases - AWS DynamoDB
-8. Queueing services - SQS, Kinesis 
+7. Queueing services - SQS, Kinesis 
+8. Databases - AWS DynamoDB
 9. Storage - S3 Bucket
 10. Monitoring – Cloud watch
 11. Caching - Cloud Front
