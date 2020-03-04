@@ -1,38 +1,33 @@
 import { Handler } from "aws-lambda";
 import {SQS} from "aws-sdk";
+import {getResponse} from "../helpers/utils";
+import {SendMessageResult} from "aws-sdk/clients/sqs";
+
+let streamUrl = process.env.QUEUE;
+if (process.env.IS_OFFLINE) {
+    streamUrl = process.env.ENDPOINT + '/queue/' + process.env.QUEUE_NAME;
+}
+let sqs = initializeSQS();
 
 export const handler: Handler = async (
     event: any
 ): Promise<any> => {
-    let sqs = await initializeSQS();
-    let streamUrl;
-    if (process.env.IS_OFFLINE) {
-        streamUrl = process.env.ENDPOINT + '/queue/' + process.env.QUEUE_NAME;
-    } else {
-        streamUrl = process.env.QUEUE;
-    }
     try {
-        await sqs.sendMessage({
+        const sendMessageResult: SendMessageResult =  await sqs.sendMessage({
             MessageBody: event.body,
             QueueUrl: streamUrl,
             DelaySeconds: 0
         }).promise();
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                message: 'message sent to queue'
-            })
-        };
+        return getResponse(200, {
+            message: 'Message sent to queue ' + sendMessageResult.MessageId
+        });
     } catch (e) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: e.message })
-        }
+        return getResponse(500, e);
     }
 };
 
-async function initializeSQS(): Promise<SQS> {
+function initializeSQS(): SQS {
     let sqs: SQS;
     if (process.env.IS_OFFLINE) {
         sqs = new SQS({
