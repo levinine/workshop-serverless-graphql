@@ -22,6 +22,7 @@ export const handler: Handler = async (
         } as PutObjectRequest;
         console.log('Uploading to S3', uploadParams);
         await s3.upload(uploadParams).promise();
+        console.log('Image uploaded');
     }
 };
 

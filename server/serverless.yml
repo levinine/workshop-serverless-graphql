@@ -42,11 +42,11 @@ provider:
         - sqs:*
       Resource:
         Fn::GetAtt: [ IngestQueue, Arn ]
-    - Effect: Allow
+    - Effect: "Allow"
       Action:
         - s3:*
       Resource:
-        Fn::GetAtt: [ OriginBucket, Arn ]
+        Fn::Join: ['', [Fn::GetAtt: [ OriginBucket, Arn ], '/*'] ]
     - Effect: Allow
       Action:
         - dynamodb:*
