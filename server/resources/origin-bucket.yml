@@ -4,4 +4,4 @@ Resources:
     #    AWS CloudFormation keeps the resource without deleting it when its stack is deleted.
     DeletionPolicy: Retain
     Properties:
-      BucketName: ${self:provider.resources.originBucketName}
+      BucketName: ${self:provider.environment.ORIGIN_BUCKET_NAME}

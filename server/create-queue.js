@@ -5,7 +5,7 @@ let sqs = new SQS({
     accessKeyId: 'root',
     secretAccessKey: 'root',
     endpoint: 'http://localhost:9324',
-    region: 'eu-west-1'
+    region: 'us-east-1'
 });
 let params = {
     QueueName: process.argv[2],
@@ -16,7 +16,7 @@ let params = {
 };
 sqs.createQueue(params).promise()
     .then((queue) => {
-        console.log(`[INFO] created queue ${process.env.QUEUE_NAME} at ${queue.QueueUrl}`);
+        console.log(`[INFO] created queue ${process.argv[2]} at ${queue.QueueUrl}`);
     })
     .catch(error => {
         console.error(`[ERROR] ${error.message}`);

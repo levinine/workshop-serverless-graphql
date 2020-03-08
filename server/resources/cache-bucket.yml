@@ -1,8 +1,0 @@
-Resources:
-  CacheBucket:
-    Type: AWS::S3::Bucket
-    Condition: IsUsEast
-    #    AWS CloudFormation keeps the resource without deleting it when its stack is deleted.
-    DeletionPolicy: Retain
-    Properties:
-      BucketName: ${self:provider.resources.cacheBucketName}

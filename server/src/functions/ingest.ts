@@ -4,9 +4,6 @@ import {getResponse} from "../helpers/utils";
 import {SendMessageResult} from "aws-sdk/clients/sqs";
 
 let streamUrl = process.env.QUEUE;
-if (process.env.IS_OFFLINE) {
-    streamUrl = process.env.ENDPOINT + '/queue/' + process.env.QUEUE_NAME;
-}
 let sqs = initializeSQS();
 
 export const handler: Handler = async (
@@ -36,6 +33,7 @@ function initializeSQS(): SQS {
             secretAccessKey: 'root',
             endpoint: 'http://localhost:9324'
         });
+        streamUrl = process.env.ENDPOINT + '/queue/' + process.env.QUEUE_NAME;
     } else {
         sqs = new SQS();
     }

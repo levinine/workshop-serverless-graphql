@@ -135,9 +135,9 @@ functions:
       - cloudFront:
           eventType: viewer-request
           origin: s3://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/files
-  update:
-    name: ${self:provider.stackName}-update
-    handler: src/functions/update.handler
+  store-to-s3:
+    name: ${self:provider.stackName}-store-to-s3
+    handler: src/functions/store-to-s3.handler
     events:
       - stream:
           type: dynamodb
@@ -146,5 +146,4 @@ functions:
 
 resources:
   - ${file(resources/origin-bucket.yml)}
-  - ${file(resources/cache-bucket.yml)}
   - ${file(resources/resources.yml)}
