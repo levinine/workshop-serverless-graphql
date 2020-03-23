@@ -18,7 +18,7 @@ export const handler: Handler = async (
             const uploadParams = {
                 Bucket: process.env.ORIGIN_BUCKET_NAME,
                 Body: base64Image,
-                Key: currencies[i].M.CoinInfo.M.ImageUrl.S.split('/').slice(-1).pop(),
+                Key: currencies[i].M.CoinInfo.M.image.S,
                 ACL: 'authenticated-read',
                 ContentType: 'image/png',
             } as PutObjectRequest;
