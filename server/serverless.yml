@@ -7,6 +7,7 @@ plugins:
   - serverless-offline-sqs
   - serverless-offline
   - serverless-dynamodb-local
+  - serverless-pseudo-parameters
 
 provider:
   name: aws
@@ -16,7 +17,7 @@ provider:
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
   environment:
-    ORIGIN_BUCKET_NAME: ${self:provider.stackName}-origin-bucket
+    ORIGIN_BUCKET_NAME: ${self:provider.stackName}-images-bucket
     STAGE: ${self:provider.stage}
     REGION: ${self:provider.region}
     QUEUE_NAME: ${self:custom.ingestQueue}
@@ -56,6 +57,14 @@ provider:
             - "/"
             - - { "Fn::GetAtt": [ DataTable, Arn ] }
               - "index/*"
+    - Effect: Allow
+      Action: ssm:GetParameters
+      Resource:
+        - 'arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/API_KEY'
+    - Effect: Allow
+      Action: kms:Decrypt
+      Resource:
+        - 'arn:aws:kms:#{AWS::Region}:#{AWS::AccountId}:alias/aws/ssm'
 
 custom:
   dataTableName: data-${self:provider.stage}
@@ -128,20 +137,20 @@ functions:
           path: graphql
           method: get
           cors: true
-#  origin-response:
-#    name: ${self:provider.stackName}-origin-response
-#    handler: src/functions/origin-response.handler
-#    events:
-#      - cloudFront:
-#          eventType: origin-response
-#          origin: s3://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/files
-#  viewer-request:
-#    name: ${self:provider.stackName}-viewer-request
-#    handler: src/functions/viewer-request.handler
-#    events:
-#      - cloudFront:
-#          eventType: viewer-request
-#          origin: s3://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/files
+  origin-response:
+    name: ${self:provider.stackName}-origin-response
+    handler: src/functions/origin-response.handler
+    events:
+      - cloudFront:
+          eventType: origin-response
+          origin: https://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/
+  viewer-request:
+    name: ${self:provider.stackName}-viewer-request
+    handler: src/functions/viewer-request.handler
+    events:
+      - cloudFront:
+          eventType: viewer-request
+          origin: https://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/
   store-to-s3:
     name: ${self:provider.stackName}-store-to-s3
     handler: src/functions/store-to-s3.handler

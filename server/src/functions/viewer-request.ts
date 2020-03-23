@@ -1,7 +1,10 @@
-import { Handler } from "aws-lambda";
+import {CloudFrontRequestEvent} from "aws-lambda";
 
-export const handler: Handler = async (
-    event: any
+export const handler = async (
+    event: CloudFrontRequestEvent
 ): Promise<any> => {
-
+    const request = event.Records[0].cf.request;
+    request.headers['levi9-header'] = [{ key: 'viewer-request', value: new Date().toISOString() }];
+    console.log(JSON.stringify(request.headers));
+    return request;
 };
