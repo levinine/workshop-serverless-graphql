@@ -8,21 +8,26 @@ const s3 = new S3();
 export const handler: Handler = async (
     event: DynamoDBStreamEvent
 ): Promise<any> => {
-    const currencies = event.Records[0].dynamodb.NewImage.currencies.L;
-    console.log('currencies: ', JSON.stringify(currencies));
-    for(let i = 0; i < currencies.length; i++) {
-        console.log('fetching image ', process.env.IMAGE_URL + currencies[i].M.CoinInfo.M.ImageUrl.S);
-        let base64Image = await getBase64(process.env.IMAGE_URL + currencies[i].M.CoinInfo.M.ImageUrl.S);
-        const uploadParams = {
-            Bucket: process.env.ORIGIN_BUCKET_NAME,
-            Body: base64Image,
-            Key: currencies[i].M.CoinInfo.M.ImageUrl.S,
-            ACL: 'authenticated-read',
-            ContentType: 'image/png',
-        } as PutObjectRequest;
-        console.log('Uploading to S3', uploadParams);
-        await s3.upload(uploadParams).promise();
-        console.log('Image uploaded');
+    if (event.Records[0].eventName === 'INSERT') {
+        console.log('Dynamodb event', event.Records[0]);
+        const currencies = event.Records[0].dynamodb.NewImage.currencies.L;
+        console.log('currencies: ', JSON.stringify(currencies));
+        for(let i = 0; i < currencies.length; i++) {
+            console.log('fetching image ', process.env.IMAGE_URL + currencies[i].M.CoinInfo.M.ImageUrl.S);
+            let base64Image = await getBase64(process.env.IMAGE_URL + currencies[i].M.CoinInfo.M.ImageUrl.S);
+            const uploadParams = {
+                Bucket: process.env.ORIGIN_BUCKET_NAME,
+                Body: base64Image,
+                Key: currencies[i].M.CoinInfo.M.ImageUrl.S.split('/').slice(-1).pop(),
+                ACL: 'authenticated-read',
+                ContentType: 'image/png',
+            } as PutObjectRequest;
+            console.log('Uploading to S3', uploadParams);
+            let response = await s3.putObject(uploadParams).promise();
+            console.log('Image uploaded', response);
+        }
+    } else {
+        console.log('Unhandled event');
     }
 };
 
