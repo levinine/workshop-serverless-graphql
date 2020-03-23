@@ -143,14 +143,14 @@ functions:
     events:
       - cloudFront:
           eventType: origin-response
-          origin: https://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/
+          origin: s3://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/files
   viewer-request:
     name: ${self:provider.stackName}-viewer-request
     handler: src/functions/viewer-request.handler
     events:
       - cloudFront:
           eventType: viewer-request
-          origin: https://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/
+          origin: s3://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/files
   store-to-s3:
     name: ${self:provider.stackName}-store-to-s3
     handler: src/functions/store-to-s3.handler
@@ -163,3 +163,4 @@ functions:
 resources:
   - ${file(resources/origin-bucket.yml)}
   - ${file(resources/resources.yml)}
+  - ${file(resources/cloudfront.yml)}

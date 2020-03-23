@@ -1,0 +1,25 @@
+Resources:
+  CloudFrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub 'CloudFrontOriginAccessIdentity for ${self:provider.stage} ${self:provider.stackName}'
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - Id: !Sub '#{AWS::StackName}'
+            DomainName: { "Fn::GetAtt": [OriginBucket, DomainName] }
+            OriginPath: ''
+            S3OriginConfig:
+              OriginAccessIdentity: { Fn::Join: ["", [ "origin-access-identity/cloudfront/", { Ref: CloudFrontOriginAccessIdentity } ] ] }
+        Enabled: 'true'
+        Comment: Cloudfront distribution for crypto currency images
+        DefaultCacheBehavior:
+          TargetOriginId: !Sub '#{AWS::StackName}'
+          ViewerProtocolPolicy: allow-all
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: all
