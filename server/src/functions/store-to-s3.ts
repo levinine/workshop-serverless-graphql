@@ -42,11 +42,12 @@ async function uploadToS3(base64Image: string, currency: AttributeValue) {
         Bucket: process.env.ORIGIN_BUCKET_NAME,
         Body: base64Image,
         Key: currency.M.CoinInfo.M.Image.S,
-        ACL: 'authenticated-read',
+        ACL: 'public-read',
+        ContentEncoding: 'base64',
         ContentType: 'image/png',
     } as PutObjectRequest;
     console.log('Uploading to S3', uploadParams);
-    return await s3.putObject(uploadParams).promise();
+    return await s3.upload(uploadParams).promise();
 }
 
 async function getBase64(url: string): Promise<any> {

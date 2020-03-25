@@ -8,12 +8,16 @@ plugins:
   - serverless-dynamodb-local
   - serverless-pseudo-parameters
 
+package:
+  individually: true
+
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs10.x
   stackName: workshop-serverless-graphql-${self:provider.stage}
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
+  versionFunctions: false
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -144,7 +148,6 @@ functions:
     handler: src/functions/origin-response.handler
     memorySize: 128
     timeout: 4
-    role: LambdaEdgeRole
     events:
       - cloudFront:
           eventType: origin-response
@@ -154,7 +157,6 @@ functions:
     handler: src/functions/viewer-request.handler
     memorySize: 128
     timeout: 4
-    role: LambdaEdgeRole
     events:
       - cloudFront:
           eventType: viewer-request
@@ -174,5 +176,3 @@ functions:
 resources:
   - ${file(resources/origin-bucket.yml)}
   - ${file(resources/resources.yml)}
-  - ${file(resources/cloudfront.yml)}
-  - ${file(resources/lambda-edge-role.yml)}
