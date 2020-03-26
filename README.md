@@ -4,6 +4,7 @@
 
 * Free tier AWS account
 * Laptop
+* Basic knowledge of JavaScript
 
 ## Workshop outline
 
@@ -41,7 +42,7 @@ Client will be React application with Apollo client.
 ### What are we going to use to do it
 
 * AWS Lambda
-* SQS/Kinesis
+* SQS
 * DynamoDB
 * API Gateway
 * IAM
@@ -50,19 +51,20 @@ Client will be React application with Apollo client.
 * CloudFormation
 * S3 Bucket
 * Lambda@Edge
+* AWS SSM
 
 Most of these will be managed through Serverless framework.
 
 #### API used 
-[CryptoCompare API](https://min-api.cryptocompare.com/)
+To fetch data from [CryptoCompare API](https://min-api.cryptocompare.com/), create an account and obtain API key.
 
-When API key is obtained, put it to AWS SSM to store it securely
+Once API key is obtained, put it to AWS SSM to store it securely
 
 ```bash 
 aws ssm put-parameter --name API_KEY --value apikeyhere --type SecureString --key-id alias/aws/ssm --region us-east-1 --overwrite 
 ```
 
-You will fetch it in the app by requesting it from SSM 
+You will fetch it in the app by requesting it from AWS SSM Parameter Store
 
 ```javascript 
 const ssm = new SSM();

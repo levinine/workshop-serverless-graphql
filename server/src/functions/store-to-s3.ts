@@ -3,7 +3,7 @@ import {S3} from "aws-sdk";
 import {PutObjectRequest} from "aws-sdk/clients/s3";
 import axios from 'axios';
 
-const s3 = new S3();
+let s3 = initS3();
 
 export const handler: Handler = async (
     event: DynamoDBStreamEvent
@@ -56,4 +56,16 @@ async function getBase64(url: string): Promise<any> {
             responseType: 'arraybuffer'
         })
         .then((response: any) => Buffer.from(response.data, 'binary').toString('base64'))
+}
+
+function initS3() {
+    if (process.env.IS_OFFLINE) {
+        return new S3({
+            s3ForcePathStyle: true,
+            accessKeyId: 'S3RVER',
+            secretAccessKey: 'S3RVER',
+            endpoint: 'http://localhost:8000',
+        });
+    }
+    return new S3();
 }

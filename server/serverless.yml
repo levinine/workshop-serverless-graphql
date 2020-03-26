@@ -5,8 +5,10 @@ plugins:
   - serverless-webpack
   - serverless-offline-sqs
   - serverless-offline
+  - serverless-offline-dynamodb-streams
   - serverless-dynamodb-local
   - serverless-pseudo-parameters
+  - serverless-s3-local
 
 package:
   individually: true
@@ -70,6 +72,17 @@ custom:
       migrate: true
       seed: true
       convertEmptyValues: true
+  serverless-offline-dynamodb-streams:
+    apiVersion: '2013-12-02'
+    endpoint: http://0.0.0.0:8000
+    region: us-east-1
+    accessKeyId: root
+    secretAccessKey: root
+    skipCacheInvalidation: false
+    readInterval: 500
+  s3:
+    port: 8000
+    directory: /tmp
 
 functions:
   pull-data:
