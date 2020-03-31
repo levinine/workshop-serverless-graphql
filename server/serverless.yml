@@ -2,40 +2,24 @@ service: workshop-serverless-graphql
 app: workshop-serverless-graphql
 
 plugins:
-  - serverless-dotenv-plugin
   - serverless-webpack
   - serverless-offline-sqs
   - serverless-offline
+  - serverless-offline-dynamodb-streams
   - serverless-dynamodb-local
+  - serverless-pseudo-parameters
+  - serverless-s3-local
+
+package:
+  individually: true
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs10.x
   stackName: workshop-serverless-graphql-${self:provider.stage}
-
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
-  environment:
-    ORIGIN_BUCKET_NAME: ${self:provider.stackName}-origin-bucket
-    STAGE: ${self:provider.stage}
-    REGION: ${self:provider.region}
-    QUEUE_NAME: ${self:custom.ingestQueue}
-    ENDPOINT: ${self:custom.serverless-offline-sqs.endpoint}
-    QUEUE: !Ref IngestQueue
-    IMAGE_URL: https://cryptocompare.com
-    API_URL: https://min-api.cryptocompare.com/
-    DATA_TABLE: ${self:custom.dataTableName}
-    REMOTE_UID: !Ref "ApiGatewayRestApi"
-    REMOTE_URL: {
-      "Fn::Join":
-        [
-          "",
-          [" https://",
-           { "Ref": "ApiGatewayRestApi" },
-           ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/"
-          ]
-        ]
-    }
+  versionFunctions: false
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -56,9 +40,18 @@ provider:
             - "/"
             - - { "Fn::GetAtt": [ DataTable, Arn ] }
               - "index/*"
+    - Effect: Allow
+      Action: ssm:GetParameters
+      Resource:
+        - 'arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/API_KEY'
+    - Effect: Allow
+      Action: kms:Decrypt
+      Resource:
+        - 'arn:aws:kms:#{AWS::Region}:#{AWS::AccountId}:alias/aws/ssm'
 
 custom:
   dataTableName: data-${self:provider.stage}
+  originBucketName: ${self:provider.stackName}-images-bucket
   ingestQueue: ${self:service}-ingest-${self:provider.stage}
   serverless-offline-sqs:
     autoCreate: true
@@ -79,11 +72,35 @@ custom:
       migrate: true
       seed: true
       convertEmptyValues: true
+  serverless-offline-dynamodb-streams:
+    apiVersion: '2013-12-02'
+    endpoint: http://0.0.0.0:8000
+    region: us-east-1
+    accessKeyId: root
+    secretAccessKey: root
+    skipCacheInvalidation: false
+    readInterval: 500
+  s3:
+    port: 8000
+    directory: /tmp
 
 functions:
   pull-data:
     name: ${self:provider.stackName}-pull-data
     handler: src/functions/pull-data.handler
+    environment:
+      API_URL: https://min-api.cryptocompare.com/
+      LOCAL_URL: http://localhost:3000/
+      REMOTE_URL: {
+        "Fn::Join":
+          [
+            "",
+            [" https://",
+             { "Ref": "ApiGatewayRestApi" },
+             ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}/"
+            ]
+          ]
+      }
     events:
       - schedule: rate(1 hour)
       - http:
@@ -93,6 +110,10 @@ functions:
   ingest:
     name: ${self:provider.stackName}-ingest
     handler: src/functions/ingest.handler
+    environment:
+      QUEUE_NAME: ${self:custom.ingestQueue}
+      ENDPOINT: ${self:custom.serverless-offline-sqs.endpoint}
+      QUEUE: !Ref IngestQueue
     events:
       - http:
           path: ingest
@@ -101,6 +122,8 @@ functions:
   process:
     name: ${self:provider.stackName}-process
     handler: src/functions/process.handler
+    environment:
+      DATA_TABLE: ${self:custom.dataTableName}
     events:
       - sqs:
           queueName: IngestQueue
@@ -111,6 +134,8 @@ functions:
   expose:
     name: ${self:provider.stackName}-expose
     handler: src/functions/expose.handler
+    environment:
+      DATA_TABLE: ${self:custom.dataTableName}
     events:
       - http:
           path: expose
@@ -119,6 +144,9 @@ functions:
   graphql:
     name: ${self:provider.stackName}-graphql
     handler: src/functions/graphql.handler
+    environment:
+      STAGE: ${self:provider.stage}
+      NODE_ENV: development
     events:
       - http:
           path: graphql
@@ -128,23 +156,30 @@ functions:
           path: graphql
           method: get
           cors: true
-#  origin-response:
-#    name: ${self:provider.stackName}-origin-response
-#    handler: src/functions/origin-response.handler
-#    events:
-#      - cloudFront:
-#          eventType: origin-response
-#          origin: s3://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/files
-#  viewer-request:
-#    name: ${self:provider.stackName}-viewer-request
-#    handler: src/functions/viewer-request.handler
-#    events:
-#      - cloudFront:
-#          eventType: viewer-request
-#          origin: s3://${self:provider.environment.ORIGIN_BUCKET_NAME}.s3.amazonaws.com/files
+  origin-response:
+    name: ${self:provider.stackName}-origin-response
+    handler: src/functions/origin-response.handler
+    memorySize: 128
+    timeout: 4
+    events:
+      - cloudFront:
+          eventType: origin-response
+          origin: s3://${self:custom.originBucketName}.s3.amazonaws.com/files
+  viewer-request:
+    name: ${self:provider.stackName}-viewer-request
+    handler: src/functions/viewer-request.handler
+    memorySize: 128
+    timeout: 4
+    events:
+      - cloudFront:
+          eventType: viewer-request
+          origin: s3://${self:custom.originBucketName}.s3.amazonaws.com/files
   store-to-s3:
     name: ${self:provider.stackName}-store-to-s3
     handler: src/functions/store-to-s3.handler
+    environment:
+      ORIGIN_BUCKET_NAME: ${self:custom.originBucketName}
+      IMAGE_URL: https://cryptocompare.com
     events:
       - stream:
           type: dynamodb

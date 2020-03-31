@@ -41,8 +41,12 @@ function prepareItem(item: any): any {
         if (Object.prototype.hasOwnProperty.call(item, prop) && item[prop] === '') {
             item[prop] = '---empty---';
         }
+        if (Object.prototype.hasOwnProperty.call(item, prop) && prop === 'ImageUrl') {
+            console.log('image url', item[prop]);
+            item['Image'] = item[prop].split('/').slice(-1).pop();
+        }
         if (typeof item[prop] === 'object') {
-            prepareItem(item[prop]);
+            item[prop] = prepareItem(item[prop]);
         }
     }
     return item;
