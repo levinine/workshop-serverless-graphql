@@ -48,6 +48,11 @@ provider:
       Action: kms:Decrypt
       Resource:
         - 'arn:aws:kms:#{AWS::Region}:#{AWS::AccountId}:alias/aws/ssm'
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+        - lambda:InvokeAsync
+      Resource: "*"
 
 custom:
   dataTableName: data-${self:provider.stage}
@@ -103,10 +108,15 @@ functions:
       }
     events:
       - schedule: rate(1 hour)
-      - http:
-          path: pull-data
-          method: get
-          cors: true
+  vpc-lambda:
+    name: ${self:provider.stackName}-vpc-lambda
+    handler: src/functions/vpc-lambda.handler
+    timeout: 10
+    vpc:
+      securityGroupIds:
+        - !GetAtt VPC.DefaultSecurityGroup
+      subnetIds:
+        - !Ref PrivateSubnet
   ingest:
     name: ${self:provider.stackName}-ingest
     handler: src/functions/ingest.handler
@@ -187,5 +197,6 @@ functions:
             Fn::GetAtt: [DataTable, StreamArn]
 
 resources:
+  - ${file(resources/vpc.yml)}
   - ${file(resources/origin-bucket.yml)}
   - ${file(resources/resources.yml)}
