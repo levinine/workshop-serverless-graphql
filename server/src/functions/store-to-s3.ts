@@ -3,7 +3,7 @@ import {S3} from "aws-sdk";
 import {PutObjectRequest} from "aws-sdk/clients/s3";
 import axios from 'axios';
 
-const s3 = new S3();
+let s3 = initS3();
 
 export const handler: Handler = async (
     event: DynamoDBStreamEvent
@@ -42,11 +42,12 @@ async function uploadToS3(base64Image: string, currency: AttributeValue) {
         Bucket: process.env.ORIGIN_BUCKET_NAME,
         Body: base64Image,
         Key: currency.M.CoinInfo.M.Image.S,
-        ACL: 'authenticated-read',
+        ACL: 'public-read',
+        ContentEncoding: 'base64',
         ContentType: 'image/png',
     } as PutObjectRequest;
     console.log('Uploading to S3', uploadParams);
-    return await s3.putObject(uploadParams).promise();
+    return await s3.upload(uploadParams).promise();
 }
 
 async function getBase64(url: string): Promise<any> {
@@ -55,4 +56,16 @@ async function getBase64(url: string): Promise<any> {
             responseType: 'arraybuffer'
         })
         .then((response: any) => Buffer.from(response.data, 'binary').toString('base64'))
+}
+
+function initS3() {
+    if (process.env.IS_OFFLINE) {
+        return new S3({
+            s3ForcePathStyle: true,
+            accessKeyId: 'S3RVER',
+            secretAccessKey: 'S3RVER',
+            endpoint: 'http://localhost:8000',
+        });
+    }
+    return new S3();
 }
