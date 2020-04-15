@@ -32,10 +32,9 @@
 
 ### What are we going to build
 
-Using [CryptoCompare API](https://min-api.cryptocompare.com/) we are going to fetch Crypto currencies data, pass data into SQS and store processed data in DynamoDB.
-On the other side of system, this data will be exposed to client through GraphQL endpoint. 
+Using [CryptoCompare API](https://min-api.cryptocompare.com/) we are going to fetch Crypto currencies data periodically and keep it providing historical data to client over GraphQL API.  
 
-API contains Crypto currency images that we are going to serve though CloudFront and Lambda@Edge. 
+API contains Crypto currency images that we are going to serve from S3 bucket though CloudFront and Lambda@Edge. 
 
 Client will be React application with Apollo client.
 
