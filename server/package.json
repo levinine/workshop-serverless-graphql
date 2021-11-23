@@ -34,7 +34,7 @@
     "@types/node": "^12.12.31",
     "@types/uuid": "^7.0.2",
     "aws-lambda": "^1.0.5",
-    "aws-sdk": "^2.645.0",
+    "aws-sdk": "^2.814.0",
     "jest": "^25.1.0",
     "npx": "^10.2.2",
     "serverless": "^1.67.0",
