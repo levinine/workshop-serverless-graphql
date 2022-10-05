@@ -78,35 +78,3 @@ const apiKey = response.Parameters[0].Value;
 ### Systerm architecture
 
 ![system diagram](server/assets/system-diagram.png "System diagram")
-
-## Run locally 
-
-To be able to run system locally without deploying to AWS, we need to mimic some services. 
-
-To simulate SQS we are using ElasticMQ 
-
-Run ElasticMQ server (Requires Java JDK)
-
-```bash
-java -jar assets/elasticmq-server-0.14.14.jar
-```
-
-To simulate DynamoDB locally we are going to use in memory DynamoDB. 
-
-Download local DynamoDB 
-
-```bash
-sls dynamodb install
-```
-
-Run local DynamoDB 
-
-```bash
-sls dynamodb start --migrate
-```
-
-Run serverless offline - this will start server with API Gateway  
-
-```bash
-sls offline
-```
