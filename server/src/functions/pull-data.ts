@@ -5,7 +5,7 @@ import {GetParametersRequest} from "aws-sdk/clients/ssm";
 import {SSM} from "aws-sdk";
 
 let apiKey: string = null;
-const apiGatewayUrl = process.env.IS_OFFLINE ? process.env.LOCAL_URL : process.env.REMOTE_URL;
+const apiGatewayUrl = process.env.REMOTE_URL;
 
 export const handler: Handler = async (): Promise<any> => {
     try {

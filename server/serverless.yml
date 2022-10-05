@@ -3,12 +3,6 @@ app: workshop-serverless-graphql
 
 plugins:
   - serverless-webpack
-  - serverless-offline-sqs
-  - serverless-offline
-  - serverless-offline-dynamodb-streams
-  - serverless-dynamodb-local
-  - serverless-pseudo-parameters
-  - serverless-s3-local
 
 package:
   individually: true
@@ -43,11 +37,11 @@ provider:
     - Effect: Allow
       Action: ssm:GetParameters
       Resource:
-        - 'arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/API_KEY'
+        - 'arn:aws:ssm:${aws:region}:${aws:accountId}:parameter/API_KEY'
     - Effect: Allow
       Action: kms:Decrypt
       Resource:
-        - 'arn:aws:kms:#{AWS::Region}:#{AWS::AccountId}:alias/aws/ssm'
+        - 'arn:aws:kms:${aws:region}:${aws:accountId}:alias/aws/ssm'
     - Effect: Allow
       Action:
         - lambda:InvokeFunction
@@ -58,36 +52,6 @@ custom:
   dataTableName: data-${self:provider.stage}
   originBucketName: ${self:provider.stackName}-images-bucket
   ingestQueue: ${self:service}-ingest-${self:provider.stage}
-  serverless-offline-sqs:
-    autoCreate: true
-    apiVersion: '2012-11-05'
-    endpoint: http://0.0.0.0:9324
-    region: eu-west-1
-    accessKeyId: root
-    secretAccessKey: root
-    skipCacheInvalidation: false
-  dynamodb:
-    stages:
-      - dev
-    start:
-      port: 8000
-      inMemory: true
-      heapInitial: 200m
-      heapMax: 1g
-      migrate: true
-      seed: true
-      convertEmptyValues: true
-  serverless-offline-dynamodb-streams:
-    apiVersion: '2013-12-02'
-    endpoint: http://0.0.0.0:8000
-    region: us-east-1
-    accessKeyId: root
-    secretAccessKey: root
-    skipCacheInvalidation: false
-    readInterval: 500
-  s3:
-    port: 8000
-    directory: /tmp
 
 functions:
   pull-data:
@@ -95,7 +59,6 @@ functions:
     handler: src/functions/pull-data.handler
     environment:
       API_URL: https://min-api.cryptocompare.com/
-      LOCAL_URL: http://localhost:3000/
       REMOTE_URL: {
         "Fn::Join":
           [
@@ -108,15 +71,6 @@ functions:
       }
     events:
       - schedule: rate(1 hour)
-  vpc-lambda:
-    name: ${self:provider.stackName}-vpc-lambda
-    handler: src/functions/vpc-lambda.handler
-    timeout: 10
-    vpc:
-      securityGroupIds:
-        - !GetAtt VPC.DefaultSecurityGroup
-      subnetIds:
-        - !Ref PrivateSubnet
   ingest:
     name: ${self:provider.stackName}-ingest
     handler: src/functions/ingest.handler
