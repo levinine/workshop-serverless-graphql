@@ -4,7 +4,7 @@
   "description": "Serverless GraphQL Workshop by Levi9",
   "main": "handler.js",
   "scripts": {
-    "deploy": "export NODE_OPTIONS=--max_old_space_size=8192 npx sls deploy --stage test2-vuk --aws-profile levi9 --force"
+    "deploy:dev": "sls deploy --stage dev --aws-profile levi9 --force --verbose"
   },
   "repository": {
     "type": "git",
@@ -44,12 +44,11 @@
     "@types/uuid": "^8.3.4",
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1229.0",
+    "esbuild": "^0.15.10",
     "serverless": "^3.22.0",
-    "serverless-webpack": "^5.3.1",
+    "serverless-esbuild": "^1.33.0",
     "ts-loader": "^9.4.1",
-    "typescript": "^4.8.4",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0"
+    "typescript": "^4.8.4"
   },
   "dependencies": {
     "apollo-server-lambda": "^3.10.2",

@@ -59,13 +59,5 @@ async function getBase64(url: string): Promise<any> {
 }
 
 function initS3() {
-    if (process.env.IS_OFFLINE) {
-        return new S3({
-            s3ForcePathStyle: true,
-            accessKeyId: 'S3RVER',
-            secretAccessKey: 'S3RVER',
-            endpoint: 'http://localhost:8000',
-        });
-    }
     return new S3();
 }

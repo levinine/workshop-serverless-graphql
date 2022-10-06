@@ -1,6 +1,6 @@
 import {Handler, SQSEvent} from "aws-lambda";
 import {DynamoDB} from "aws-sdk";
-import * as uuid from 'uuid/v1';
+import { v1 as uuid } from 'uuid';
 import {getResponse} from "../helpers/utils";
 import {DocumentClient} from "aws-sdk/lib/dynamodb/document_client";
 import PutItemOutput = DocumentClient.PutItemOutput;

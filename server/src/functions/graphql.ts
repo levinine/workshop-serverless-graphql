@@ -5,23 +5,14 @@ const instantiateApollo = (): ApolloServer => {
     console.log(process.env);
     return new ApolloServer({
         modules: [schema],
-        playground: process.env.NODE_ENV === 'production' ? false : {
-            endpoint: process.env.IS_OFFLINE
-                ? '/graphql'
-                : `/${process.env.STAGE}/graphql`,
-        },
-        context: {},
+        csrfPrevention: true,
+        plugins: []
     });
 };
 
-export const handler = (event: any, context: any, callback: any): void => {
+export const handler = (event: any, context: any, callback: any): void | Promise<any> => {
     const server = instantiateApollo();
-    const graphqlHandler = server.createHandler({
-        cors: {
-            origin: '*',
-            credentials: true,
-        },
-    });
+    const graphqlHandler = server.createHandler();
 
     // tell AWS lambda we do not want to wait for NodeJS event loop
     // to be empty in order to send the response

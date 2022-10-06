@@ -25,17 +25,5 @@ export const handler: Handler = async (
 };
 
 function initializeSQS(): SQS {
-    let sqs: SQS;
-    if (process.env.IS_OFFLINE) {
-        sqs = new SQS({
-            apiVersion: '2012-11-05',
-            accessKeyId: 'root',
-            secretAccessKey: 'root',
-            endpoint: 'http://localhost:9324'
-        });
-        streamUrl = process.env.ENDPOINT + '/queue/' + process.env.QUEUE_NAME;
-    } else {
-        sqs = new SQS();
-    }
-    return sqs;
+    return new SQS();
 }

@@ -1,3 +1,4 @@
+Description: Serverless GraphQL Workshop by Levi9
 Resources:
   OriginBucket:
     Type: AWS::S3::Bucket
