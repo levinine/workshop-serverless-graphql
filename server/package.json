@@ -4,7 +4,7 @@
   "description": "Serverless GraphQL Workshop by Levi9",
   "main": "handler.js",
   "scripts": {
-    "deploy:dev": "sls deploy --stage dev --aws-profile levi9 --force --verbose"
+    "deploy:dev": "sls deploy --stage dev --force --verbose"
   },
   "repository": {
     "type": "git",
